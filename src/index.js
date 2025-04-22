@@ -3,7 +3,7 @@ const bodyParser = require("express");
 const NumberValidationService = require('./services/NumberValidationService');
 const fs = require('fs');
 const fastCsv = require('fast-csv');
-const {Client, Contact, LocalAuth} = require('whatsapp-web.js');
+const {Client, LocalAuth} = require('whatsapp-web.js');
 const qrcode = require('qrcode-terminal');
 
 const app = express();
