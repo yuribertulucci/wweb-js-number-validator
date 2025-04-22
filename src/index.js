@@ -46,15 +46,36 @@ client.on('qr', (qr) => {
 client.initialize();
 
 const numberValidationService = new NumberValidationService(client);
-app.get('/number-exists/:number', async (req, res) => {
+// Rotas para validação de números do WhatsApp
+app.get('/number-validation/number-exists/:number', async (req, res) => {
   try {
     const number = req.params.number;
-    console.log(`${number} is ${number}\n\n\n`);
     const isUser = await numberValidationService.isNumberInWhatsapp(number);
-    res.json({isUser: isUser});
+    res.json({ success: true, message: isUser ? 'Usuário possui cadastro no WhatsApp' : 'Usuário não possui cadastro no WhatsApp', data: {isUser: isUser} });
   } catch (err) {
     console.error('Error:', err);
-    res.status(500).json({error: 'Internal Server Error'});
+    res.status(500).json({ success: false, error: 'Internal Server Error', details: err.message });
+  }
+})
+app.post('/number-validation/validate-numbers', async (req, res) => {
+  const numbers = req.body.numbers;
+  if (!Array.isArray(numbers)) {
+    return res.status(400).json({ error: 'Numbers should be an array.', details: `'numbers' field should be of type 'Array', type '${typeof numbers}' provided` });
+  }
+  if (numbers.length === 0) {
+    return res.status(400).json({ error: 'No numbers provided.', details: "'numbers' array provided is empty" });
+  }
+
+
+  // Transforma os números em strings para evitar erros
+  const numbersString = numbers.map(number => number.toString());
+
+  try {
+    const results = await numberValidationService.validateNumbers(numbersString);
+    res.json({ success: true, data: results });
+  } catch (err) {
+    console.error('Error:', err);
+    res.status(500).json({ success: false, error: 'Internal Server Error', details: err.message });
   }
 })
 
