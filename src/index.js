@@ -25,7 +25,7 @@ try {
   client = new Client({
     puppeteer: {
       headless: true,
-      noSandbox: true,
+      args: ['--no-sandbox', '--disable-setuid-sandbox'], // Adicione essas flags
     },
     authStrategy: new LocalAuth({
       clientId: "client-one"
