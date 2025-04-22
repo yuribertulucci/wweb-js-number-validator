@@ -20,14 +20,20 @@ app.listen(3000, () => {
 });
 
 // Create a new client instance
-const client = new Client({
-  puppeteer: {
-    headless: true,
-  },
-  authStrategy: new LocalAuth({
-    clientId: "client-one"
-  })
-});
+let client;
+try {
+  client = new Client({
+    puppeteer: {
+      headless: true,
+      noSandbox: true,
+    },
+    authStrategy: new LocalAuth({
+      clientId: "client-one"
+    })
+  });
+} catch (error) {
+  console.error('Error initializing client:', error);
+}
 // When the client is ready, run this code (only once)
 client.once('ready', async () => {
   console.log('Client is ready!');
